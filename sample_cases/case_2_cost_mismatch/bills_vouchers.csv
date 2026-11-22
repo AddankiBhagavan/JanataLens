@@ -1,0 +1,4 @@
+bill_no,work_id,vendor,bill_date,amount,category
+BILL-DES-01,WRK-AP-2026-00204,Deccan Heavy Machinery,2026-07-25,380000.0,machinery
+BILL-DES-02,WRK-AP-2026-00204,Ganga Transport Fleet,2026-08-04,290000.0,transport
+BILL-DES-03,WRK-AP-2026-00204,Raja Stone Pitching,2026-08-14,250000.0,material

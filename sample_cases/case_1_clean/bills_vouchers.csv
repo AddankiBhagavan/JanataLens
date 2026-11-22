@@ -1,0 +1,4 @@
+bill_no,work_id,vendor,bill_date,amount,category
+INV-2026-01,WRK-AP-2026-00101,Sri Sai Stone Crushers,2026-07-18,180000.0,material
+INV-2026-02,WRK-AP-2026-00101,Amberpet Earthworks,2026-07-22,120000.0,material
+INV-2026-03,WRK-AP-2026-00101,Ranga Reddy Hume Pipes,2026-07-29,50000.0,material

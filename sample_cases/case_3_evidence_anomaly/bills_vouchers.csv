@@ -1,0 +1,4 @@
+bill_no,work_id,vendor,bill_date,amount,category
+BILL-PRE-01,WRK-AP-2026-00309,Bhavani Cement Depot,2026-06-25,95000.0,material
+BILL-POST-02,WRK-AP-2026-00309,Vagu Sand Quarry,2026-07-22,36000.0,material
+BILL-POST-03,WRK-AP-2026-00309,Kakatiya Stone Works,2026-08-01,108000.0,material
