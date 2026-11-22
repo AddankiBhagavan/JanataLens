@@ -41,6 +41,7 @@ from src.document_extractor import (
 )
 from src.gemini_adapter import GeminiAdapter
 from src.finding_status import map_finding_display_state as _map_finding_display_state
+from src.display_messages import GEMINI_OFFLINE_MESSAGE, PHOTO_NO_SIGNAL_MESSAGE
 from src.report_generator import generate_json_report, generate_markdown_report
 from src.sample_generator import generate_all_cases
 from src.schemas import (
@@ -745,9 +746,9 @@ elif st.session_state.current_page == "methodology":
             """
             | Rule ID | Title | Legal Section | Calculation / Comparison Basis |
             |---|---|---|---|
-            | **JL-01** | Janata Board Completeness | Section 25(2)(b) | Verifies worksite board displays work details, estimated labour days, material quantities, and item-wise costs. |
-            | **JL-02** | Financial Reconciliation | Section 25(2)(c) & (d) | Reconciles cumulative bills against administrative and revised sanction orders using Python `Decimal`. |
-            | **JL-03** | Labour & Wage Timeline | Section 5(3) & Sched II Para 6 | Separately checks 14-day wage disbursement and 15-day muster closure compensation. |
+            | **JL-01** | Janata Board Completeness | Schedule I, paragraph 25(2)(b) | Verifies worksite board displays work details, estimated labour days, material quantities, and item-wise costs. |
+            | **JL-02** | Financial Reconciliation | Schedule I, paragraph 14; Section 23(1)-(2) | Reconciles documentary expenditure against supplied sanctions and fund/account records using Python `Decimal`. |
+            | **JL-03** | Labour & Wage Timeline | Section 5(3); Schedule I, paragraph 16; Schedule II, paragraph 6 | Separately checks fortnight wage timing, measurements, and an operational compensation clock. |
             | **JL-04** | Chronological Integrity | General Financial Rules | Verifies that bills, muster closures, and stage photos are dated on or after sanction date. |
             | **JL-05** | Photo Reuse Forensics | Digital Audit Guidelines | Pairwise SHA-256 exact match and perceptual hash (pHash / dHash) Hamming distance. |
             """
@@ -764,7 +765,7 @@ elif st.session_state.current_page == "methodology":
                - FTO generation or processing is **not** treated as proof of credit.
             
             2. **Delay Compensation Clock (Schedule II, Paragraph 6):**
-               - If wages are not paid within 15 days from muster-roll closure, delay compensation is payable at **0.05% of unpaid wages per day of delay** beyond the 16th day of closure.
+               - Schedule II, paragraph 6 provides a separate delay-compensation calculation: beyond the 15-day clock from muster-roll closure, compensation is calculated at **0.05% of unpaid wages per day of delay beyond the 16th day**. This is retained as an operational review check, not a general statutory wage-timing rule.
                - Only calculated when muster closure date, wage due, and confirmed credit date are evidenced.
             """
         )
@@ -1248,7 +1249,7 @@ elif st.session_state.current_page == "audit":
                 st.info("No bills or vouchers uploaded.")
 
             # 4. Worksite Janata Board Completeness
-            st.markdown("#### 4. Janata Board Statutory Disclosures (Section 25(2)(b))")
+            st.markdown("#### 4. Janata Board Statutory Disclosures (Schedule I, paragraph 25(2)(b))")
             board = bundle.board_data
             if board:
                 b_ld = board.estimated_labour_days.get_effective_value() if board.estimated_labour_days else "Not Found"
@@ -1480,7 +1481,7 @@ elif st.session_state.current_page == "audit":
                                     "Physical verification at worksite is required."
                                 )
                             else:
-                                st.success("**Distinct Visual Content:** Photographs show distinct physical appearances.")
+                                st.success(f"**No Exact or Near-Duplicate Signal:** {PHOTO_NO_SIGNAL_MESSAGE}")
 
             with f_tab3:
                 # Plain-Language Explanations (AI layer)
@@ -1508,8 +1509,7 @@ elif st.session_state.current_page == "audit":
                         st.info(f"**తెలుగు సమీక్ష వివరణ (Telugu Summary):**\n\n{st.session_state.gemini_te}")
                 else:
                     st.info(
-                        "Gemini API key is not configured locally. "
-                        "The deterministic audit results above are complete, evidence-backed, and authoritative."
+                        GEMINI_OFFLINE_MESSAGE
                     )
 
             st.markdown("<br>", unsafe_allow_html=True)

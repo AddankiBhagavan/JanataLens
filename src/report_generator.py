@@ -95,6 +95,9 @@ def generate_markdown_report(report: AuditReport) -> str:
             lines.append(
                 f"| `{ev.filename}` | `{ev.evidence_type.value}` | `{ev.sha256[:12]}...` | {ev.file_size_bytes:,} | {'Yes' if ev.synthetic else 'No'} |"
             )
+        lines.append(
+            "\nSource-file SHA-256 values identify the supplied file. They do not uniquely identify individual CSV rows."
+        )
     lines.append("")
 
     # Detailed Findings
@@ -103,7 +106,7 @@ def generate_markdown_report(report: AuditReport) -> str:
         lines.append("*No findings generated.*")
     else:
         for idx, f in enumerate(report.findings, start=1):
-            badge = "🟢" if f.status == FindingStatus.CONSISTENT else ("🔴" if f.status == FindingStatus.MISMATCH_FOUND else "🟡")
+            badge = "VERIFIED" if f.status == FindingStatus.CONSISTENT else ("INCONSISTENT" if f.status == FindingStatus.MISMATCH_FOUND else ("MISSING" if f.status == FindingStatus.MISSING_EVIDENCE else "UNVERIFIED"))
             lines.append(f"### Finding {idx}: {badge} [{f.rule_id}] {f.title}")
             display_state = map_finding_display_state(f, report=report)
             lines.append(

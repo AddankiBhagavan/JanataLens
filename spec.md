@@ -114,14 +114,14 @@ The Act provides a statutory guarantee of 125 days of unskilled wage employment 
 
 ### 4.2 Janata Board and public disclosure anchor
 
-Section 25(2)(b) requires a Janata Board at every worksite showing:
+Schedule I, paragraph 25(2)(b) requires a Janata Board at every worksite showing:
 
 - Details of the work.
 - Estimated labour days.
 - Material quantities in local terminology.
 - Item-wise costs.
 
-Section 25(2)(c) and 25(2)(d) address physical/digital disclosure of employment, wage and material payments, approved works, works taken up/completed, labour demand, material utilisation, and physical progress. Weekly disclosures are to be generated and made publicly available in physical and digital formats. Section 25(3) provides for social audit at least once every six months.
+Schedule I, paragraph 14 addresses administrative and financial sanction. Section 23(1)-(2) addresses proper fund utilisation and maintenance of labour and expenditure accounts. These sources support documentary reconciliation and account review; they do not by themselves establish a legal violation.
 
 The application must implement a **versioned completeness checklist** based on the applicable requirement and source. Do not treat optional fields, local formatting conventions, or fields not established by the applicable rule as mandatory.
 

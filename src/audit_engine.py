@@ -55,11 +55,11 @@ RULE_SOURCES: Dict[str, RuleSource] = {
         issuing_authority="Gazette of India / Ministry of Rural Development",
         url="https://egazette.gov.in/WriteReadData/2025/268696.pdf",
         retrieval_date=date(2026, 11, 21),
-        section_reference="Section 25(2)(b), VB–G RAM G Act, 2025",
+        section_reference="Schedule I, paragraph 25(2)(b), VB–G RAM G Act, 2025",
         effective_date=date(2026, 7, 1),
         jurisdiction="national",
         calculation_basis="Presence and completeness of statutory worksite board fields",
-        limitations="Only flags missing fields required by Section 25(2)(b). Does not evaluate physical signboard material durability.",
+        limitations="Only flags missing fields required by Schedule I, paragraph 25(2)(b). Does not evaluate physical signboard material durability.",
     ),
     "JL-02": RuleSource(
         rule_id="JL-02",
@@ -68,11 +68,11 @@ RULE_SOURCES: Dict[str, RuleSource] = {
         issuing_authority="Statutory Social Audit & Financial Guidelines",
         url="https://egazette.gov.in/WriteReadData/2025/268696.pdf",
         retrieval_date=date(2026, 11, 21),
-        section_reference="Section 25(2)(c) & (d), Financial Sanction Rules",
+        section_reference="Schedule I, paragraph 14; Section 23(1)-(2), VB–G RAM G Act, 2025",
         effective_date=date(2026, 7, 1),
         jurisdiction="national",
-        calculation_basis="Cumulative bills/vouchers compared against latest valid administrative sanction order",
-        limitations="Calculates mathematical differences. A mismatch flags a discrepancy requiring human review and does not prove misuse.",
+        calculation_basis="Cumulative bills/vouchers compared against the latest supplied administrative or financial sanction",
+        limitations="Calculates documentary differences only. A mismatch requires human review and does not establish a legally defined violation, misuse, or impropriety.",
     ),
     "JL-03": RuleSource(
         rule_id="JL-03",
@@ -81,11 +81,11 @@ RULE_SOURCES: Dict[str, RuleSource] = {
         issuing_authority="Gazette of India",
         url="https://egazette.gov.in/WriteReadData/2025/268696.pdf",
         retrieval_date=date(2026, 11, 21),
-        section_reference="Section 5(3) & Schedule II, Paragraph 6, VB–G RAM G Act, 2025",
+        section_reference="Section 5(3); Schedule I, paragraph 16; Schedule II, paragraph 6",
         effective_date=date(2026, 7, 1),
         jurisdiction="national",
-        calculation_basis="Separate evaluation of 14-day wage disbursement and 15-day muster closure compensation (0.05%/day)",
-        limitations="Requires confirmed bank/post-office credit date. FTO generation/upload is not treated as proof of credit.",
+        calculation_basis="Weekly/fortnight wage timing under Section 5(3); measurements under Schedule I, paragraph 16; separate operational Schedule II, paragraph 6 delay-compensation calculation",
+        limitations="Requires confirmed bank/post-office credit date. FTO generation/upload is not proof of credit. The 15-day muster-close delay clock is reported only as a separate operational compensation check where its applicable source is cited.",
     ),
     "JL-04": RuleSource(
         rule_id="JL-04",
@@ -206,7 +206,7 @@ def validate_work_linkage(bundle: AuditBundle) -> Tuple[bool, Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 def audit_jl01_board_completeness(bundle: AuditBundle) -> AuditFinding:
-    """JL-01: Verifies presence of statutory worksite board fields under Section 25(2)(b)."""
+    """JL-01: Verifies presence of statutory worksite board fields under Schedule I, paragraph 25(2)(b)."""
     board = bundle.board_data
     if not board:
         return AuditFinding(
@@ -217,7 +217,7 @@ def audit_jl01_board_completeness(bundle: AuditBundle) -> AuditFinding:
             severity=Severity.HIGH,
             summary="No worksite Janata Board photograph or record was supplied in the audit bundle.",
             observed_values={"janata_board_present": False},
-            comparison_values={"statutory_requirement": "Mandatory worksite board under Section 25(2)(b)"},
+            comparison_values={"statutory_requirement": "Mandatory worksite board under Schedule I, paragraph 25(2)(b)"},
             evidence_references=[],
             rule_source=RULE_SOURCES["JL-01"],
             human_verification_steps=[
@@ -269,7 +269,7 @@ def audit_jl01_board_completeness(bundle: AuditBundle) -> AuditFinding:
                 "material_entries_count": len(board.material_entries),
             },
             comparison_values={
-                "statutory_mandate": "Work details, estimated labour days, material quantities, and item-wise costs (Section 25(2)(b))"
+                "statutory_mandate": "Work details, estimated labour days, material quantities, and item-wise costs (Schedule I, paragraph 25(2)(b))"
             },
             evidence_references=ev_refs,
             rule_source=RULE_SOURCES["JL-01"],
@@ -291,7 +291,7 @@ def audit_jl01_board_completeness(bundle: AuditBundle) -> AuditFinding:
             "estimated_labour_days": str(labour_days_val),
             "material_items_count": len(board.material_entries),
         },
-        comparison_values={"requirement": "Section 25(2)(b) completeness criteria"},
+        comparison_values={"requirement": "Schedule I, paragraph 25(2)(b) completeness criteria"},
         evidence_references=ev_refs,
         rule_source=RULE_SOURCES["JL-01"],
         human_verification_steps=[
@@ -550,7 +550,7 @@ def audit_jl02_financial_reconciliation(
 # ---------------------------------------------------------------------------
 
 def audit_jl03_labour_timeline(bundle: AuditBundle) -> List[AuditFinding]:
-    """JL-03: Separately evaluates Act section 5(3) wage disbursement timing and Schedule II delay compensation."""
+    """JL-03: Separately evaluates Section 5(3) wage timing and the Schedule II paragraph 6 operational compensation check."""
     findings: List[AuditFinding] = []
     labour_records = bundle.labour_records
 
@@ -695,7 +695,7 @@ def audit_jl03_labour_timeline(bundle: AuditBundle) -> List[AuditFinding]:
                 )
             )
 
-        # Check B: Schedule II Paragraph 6 Delay Compensation (15 days from muster closure, 0.05%/day)
+        # Separate operational check: Schedule II Paragraph 6 compensation clock
         if not lr.muster_closure_date:
             findings.append(
                 AuditFinding(
@@ -729,8 +729,8 @@ def audit_jl03_labour_timeline(bundle: AuditBundle) -> List[AuditFinding]:
                     status=FindingStatus.NEEDS_HUMAN_REVIEW,
                     severity=Severity.HIGH,
                     summary=(
-                        f"Wages paid {days_from_closure} days after muster closure ({delay_days} days beyond statutory 15-day limit). "
-                        f"Delay compensation payable under Schedule II is ₹{comp_amount:,.2f}."
+                        f"Wages paid {days_from_closure} days after muster closure ({delay_days} days beyond the separate Schedule II Paragraph 6 15-day operational threshold). "
+                        f"The separate delay-compensation calculation indicates ₹{comp_amount:,.2f}; entitlement remains subject to human review."
                     ),
                     observed_values={
                         "muster_closure_date": str(lr.muster_closure_date),
@@ -739,7 +739,7 @@ def audit_jl03_labour_timeline(bundle: AuditBundle) -> List[AuditFinding]:
                         "wage_amount": str(lr.wage_amount_due),
                         "calculated_compensation": str(comp_amount),
                     },
-                    comparison_values={"statutory_threshold": "15 days from muster closure"},
+                    comparison_values={"operational_threshold": "Separate Schedule II paragraph 6 clock: 15 days from muster closure"},
                     exact_calculation=calc_str,
                     evidence_references=ev_refs,
                     rule_source=RULE_SOURCES["JL-03"],
@@ -759,7 +759,7 @@ def audit_jl03_labour_timeline(bundle: AuditBundle) -> List[AuditFinding]:
                     severity=Severity.INFO,
                     summary=f"Wages paid {days_from_closure} days after muster closure; no delay compensation triggered.",
                     observed_values={"days_from_closure": days_from_closure},
-                    comparison_values={"threshold": "15 days"},
+                    comparison_values={"operational_threshold": "Separate Schedule II paragraph 6 clock: 15 days"},
                     evidence_references=ev_refs,
                     rule_source=RULE_SOURCES["JL-03"],
                     human_verification_steps=[],
@@ -1028,10 +1028,10 @@ def audit_jl05_photo_reuse(
             AuditFinding(
                 finding_id="JL-05-F1",
                 rule_id="JL-05",
-                title="Stage Photographs Show Distinct Visual Content",
+                title="No Exact or Near-Duplicate Photo Signal Found",
                 status=FindingStatus.CONSISTENT,
                 severity=Severity.INFO,
-                summary=f"Pairwise comparison of {len(photos)} stage photographs found no identical or near-duplicate image pairs.",
+                summary=f"Configured SHA-256 and perceptual-hash comparisons found no exact or near-duplicate signal among {len(photos)} stage photographs. This does not establish authenticity, location, capture date, chronology, or work progress.",
                 observed_values={"photos_compared": len(photos)},
                 comparison_values={"threshold": f"pHash <= {phash_threshold}, dHash <= {dhash_threshold}"},
                 evidence_references=[p.evidence_reference for p in photos],
